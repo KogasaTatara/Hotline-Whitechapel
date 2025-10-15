@@ -2,56 +2,55 @@ using UnityEngine;
 
 public class TiroTopDown : MonoBehaviour
 {
-    [Header("Configurações do Tiro")]
-    public GameObject prefabProjetil; // Prefab do projétil que será instanciado ao atirar
-    public float velocidadeProjetil = 10f; // Velocidade do projétil
-    public float tempoEntreTiros = 0.3f;   // Tempo mínimo entre tiros consecutivos
+    [Header("Configuraï¿½ï¿½es do Tiro")]
+    public GameObject prefabProjetil; // Prefab do projï¿½til que serï¿½ instanciado ao atirar
+    public float velocidadeProjetil = 10f; // Velocidade do projï¿½til
+    public float tempoEntreTiros = 0.3f;   // Tempo mï¿½nimo entre tiros consecutivos
 
-    public Transform pontoTiro; // Ponto de onde o projétil será disparado
+    public Transform pontoTiro; // Ponto de onde o projï¿½til serï¿½ disparado
 
     private float tempoProximoTiro = 0f; // Guarda o tempo em que o jogador pode atirar novamente
 
     void Update()
     {
-        // Rotaciona o jogador para olhar na direção do mouse
-        GirarParaMouse();
-
-        // Verifica se o botão esquerdo do mouse foi pressionado e se já passou o tempo de cooldown
-        if (Input.GetMouseButton(0) && Time.time >= tempoProximoTiro)
-        {
-            Atirar(); // Instancia o projétil
-            tempoProximoTiro = Time.time + tempoEntreTiros; // Atualiza o tempo do próximo tiro permitido
-        }
-    }
-
-    // Método que gira o jogador na direção do mouse
-    void GirarParaMouse()
-    {
-        // Pega a posição do mouse no mundo
+        // Pega a posiï¿½ï¿½o do mouse no mundo
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0f; // Z sempre 0 no 2D
 
-        // Calcula a direção do jogador para o mouse
+        // Rotaciona o jogador para olhar na direï¿½ï¿½o do mouse
+        GirarParaMouse(mousePos);
+
+        // Verifica se o botï¿½o esquerdo do mouse foi pressionado e se jï¿½ passou o tempo de cooldown
+        if (Input.GetMouseButton(0) && Time.time >= tempoProximoTiro)
+        {
+            Atirar(mousePos); // Passa a posiï¿½ï¿½o do mouse para o mï¿½todo Atirar
+            tempoProximoTiro = Time.time + tempoEntreTiros; // Atualiza o tempo do prï¿½ximo tiro permitido
+        }
+    }
+
+    // Mï¿½todo que gira o jogador na direï¿½ï¿½o do mouse
+    void GirarParaMouse(Vector3 mousePos)
+    {
+        // Calcula a direï¿½ï¿½o do jogador para o mouse
         Vector3 direcao = (mousePos - transform.position).normalized;
 
-        // Calcula o ângulo em graus usando Atan2 (y,x)
+        // Calcula o ï¿½ngulo em graus usando Atan2 (y,x)
         float angulo = Mathf.Atan2(direcao.y, direcao.x) * Mathf.Rad2Deg;
 
-        // Aplica a rotação no eixo Z
+        // Aplica a rotaï¿½ï¿½o no eixo Z
         transform.rotation = Quaternion.Euler(0, 0, angulo);
     }
 
-    // Método que instancia o projétil e define sua direção e velocidade
-    void Atirar()
+    // Mï¿½todo que instancia o projï¿½til e define sua direï¿½ï¿½o e velocidade
+    void Atirar(Vector3 mousePos)
     {
-        // Instancia o prefab do projétil na posição do ponto de tiro
+        // Instancia o prefab do projï¿½til na posiï¿½ï¿½o do ponto de tiro
         GameObject proj = Instantiate(prefabProjetil, pontoTiro.position, Quaternion.identity);
 
-        // Calcula a direção do projétil em direção ao mouse
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        // Calcula a direï¿½ï¿½o do projï¿½til em direï¿½ï¿½o ao mouse
         Vector2 direcao = (mousePos - proj.transform.position).normalized;
 
-        // Aplica velocidade ao Rigidbody2D do projétil
+        // Aplica velocidade ao Rigidbody2D do projï¿½til
         Rigidbody2D rb = proj.GetComponent<Rigidbody2D>();
         rb.linearVelocity = direcao * velocidadeProjetil;
     }
